@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en" class="dark">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CloudGuardian Enterprise</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            black: '#000000',
+            cyan: { 400: '#22d3ee', 500: '#06b6d4' },
+            purple: { 500: '#a855f7', 600: '#9333ea' }
+          },
+          fontFamily: { sans: ['Outfit', 'Inter', 'sans-serif'], mono: ['JetBrains Mono', 'monospace'] }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet">
+</head>
+
+<body class="bg-background text-foreground">
+  <div id="root"></div>
+  <script type="module" src="/src/main.jsx"></script>
+  <!-- Config script for API_BASE if needed, though React env is better -->
+  <script>
+    window.API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? 'http://127.0.0.1:8000' : '/api';
+  </script>
+</body>
+
+</html>

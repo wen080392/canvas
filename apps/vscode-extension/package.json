@@ -1,0 +1,117 @@
+{
+  "name": "cloudguardian-vscode",
+  "displayName": "CloudGuardian Security Scanner",
+  "description": "Inline security scanning for Terraform, Python, JavaScript and more",
+  "version": "1.0.0",
+  "publisher": "cloudguardian",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": [
+    "Linters",
+    "Security"
+  ],
+  "keywords": [
+    "security",
+    "secrets",
+    "terraform",
+    "scanner",
+    "devops"
+  ],
+  "activationEvents": [
+    "onStartupFinished",
+    "onLanguage:terraform",
+    "onLanguage:python",
+    "onLanguage:javascript",
+    "onLanguage:typescript"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "cloudguardian.scan",
+        "title": "CloudGuardian: Scan Current File",
+        "description": "Scan the current file for secrets and vulnerabilities"
+      },
+      {
+        "command": "cloudguardian.scanWorkspace",
+        "title": "CloudGuardian: Scan Workspace",
+        "description": "Scan all files in the workspace"
+      },
+      {
+        "command": "cloudguardian.clearDiagnostics",
+        "title": "CloudGuardian: Clear Diagnostics",
+        "description": "Clear all CloudGuardian diagnostics"
+      },
+      {
+        "command": "cloudguardian.settings",
+        "title": "CloudGuardian: Settings",
+        "description": "Open CloudGuardian settings"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "cloudguardian.scan",
+        "key": "ctrl+shift+g",
+        "mac": "cmd+shift+g"
+      }
+    ],
+    "configuration": {
+      "title": "CloudGuardian",
+      "properties": {
+        "cloudguardian.apiUrl": {
+          "type": "string",
+          "default": "http://localhost:8000",
+          "description": "CloudGuardian API base URL"
+        },
+        "cloudguardian.apiToken": {
+          "type": "string",
+          "description": "CloudGuardian API token (JWT)",
+          "markdownDescription": "Your CloudGuardian JWT token for authentication"
+        },
+        "cloudguardian.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable CloudGuardian scanning"
+        },
+        "cloudguardian.scanOnSave": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically scan on file save"
+        },
+        "cloudguardian.scanOnOpen": {
+          "type": "boolean",
+          "default": false,
+          "description": "Automatically scan on file open"
+        },
+        "cloudguardian.showStatus": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show CloudGuardian status bar"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile",
+    "test": "mocha -r ts-node/register 'src/**/*.test.ts'",
+    "package": "vsce package",
+    "publish": "vsce publish"
+  },
+  "dependencies": {
+    "axios": "^1.6.0"
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.0",
+    "@types/node": "^18.0.0",
+    "@types/vscode": "^1.80.0",
+    "mocha": "^10.2.0",
+    "ts-node": "^10.9.0",
+    "typescript": "^5.0.0",
+    "vsce": "^2.15.0"
+  }
+}

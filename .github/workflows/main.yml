@@ -1,0 +1,113 @@
+name: CloudGuardian CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  backend-test:
+    name: Backend Tests
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pytest pytest-cov
+        if [ -f apps/backend/requirements.txt ]; then pip install -r apps/backend/requirements.txt; fi
+        
+    - name: Run Backend Tests
+      run: |
+        cd apps/backend
+        pytest tests/ -v --cov=app
+
+  frontend-check:
+    name: Frontend Build & Lint
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+
+    - name: Install dependencies
+      run: |
+        cd apps/frontend
+        npm install
+
+    - name: Lint
+      run: |
+        cd apps/frontend
+        npm run lint
+
+    - name: Build
+      run: |
+        cd apps/frontend
+        npm run build
+
+  extension-test:
+    name: VS Code Extension Tests
+    runs-on: ubuntu-latest
+    # Run only if extension directory exists
+    if: hashFiles('apps/vscode-extension/package.json') != ''
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+
+    - name: Install dependencies
+      run: |
+        cd apps/vscode-extension
+        npm install
+
+    - name: Run Tests
+      # Assuming xvfb is needed for vscode tests in linux
+      run: |
+        cd apps/vscode-extension
+        npm test
+      env:
+        DISPLAY: :99
+
+  cli-test:
+    name: CLI Tests
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        cd apps/cli
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+        pip install -e .
+        pip install pytest
+
+    - name: Run CLI Smoke Test
+      run: |
+        cloudguardian --help

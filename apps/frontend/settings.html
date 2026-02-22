@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - CloudGuardian</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        black: '#000000',
+                        gray: { 850: '#121212', 900: '#0a0a0a', 950: '#050505' },
+                        primary: { 500: '#06b6d4', 600: '#0891b2' }, // Cyan
+                        secondary: { 500: '#a855f7', 600: '#9333ea' } // Purple
+                    },
+                    fontFamily: { sans: ['Outfit', 'Inter', 'sans-serif'], mono: ['JetBrains Mono', 'monospace'] }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: #000000;
+            color: #e5e5e5;
+        }
+
+        .glass-panel {
+            background: rgba(10, 10, 10, 0.7);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .glass-sidebar {
+            background: rgba(5, 5, 5, 0.85);
+            backdrop-filter: blur(20px);
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .toggle-checkbox:checked {
+            right: 0;
+            border-color: #22d3ee;
+        }
+
+        .toggle-checkbox:checked+.toggle-label {
+            background-color: #06b6d4;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #000000;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #444;
+        }
+    </style>
+    <script>
+        if (!localStorage.getItem('access_token')) { window.location.href = 'login.html'; }
+    </script>
+</head>
+
+<body class="h-screen overflow-hidden antialiased selection:bg-cyan-500/30 selection:text-cyan-200">
+    <!-- Background Ambience -->
+    <div class="fixed inset-0 pointer-events-none z-0">
+        <div class="absolute bottom-[10%] right-[30%] w-[600px] h-[600px] bg-purple-600/10 rounded-full blur-[140px]">
+        </div>
+        <div class="absolute top-[10%] left-[10%] w-[500px] h-[500px] bg-cyan-600/10 rounded-full blur-[120px]"></div>
+    </div>
+
+    <div class="flex h-screen relative z-10">
+        <!-- Sidebar -->
+        <aside class="w-72 glass-sidebar flex flex-col z-20">
+            <div class="p-8 pb-6">
+                <h1 class="text-2xl font-bold flex items-center tracking-tight group cursor-pointer"
+                    onclick="location.href='index.html'">
+                    <div
+                        class="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500/20 to-purple-600/20 border border-white/10 flex items-center justify-center mr-3 group-hover:border-cyan-500/50 transition-colors">
+                        <i class="fas fa-shield-alt text-cyan-400 text-lg"></i>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="text-white font-bold tracking-wide">CloudGuardian</span>
+                        <span class="text-[10px] text-gray-500 font-mono uppercase tracking-widest">Enterprise</span>
+                    </div>
+                </h1>
+            </div>
+
+            <nav class="flex-1 px-4 space-y-2 overflow-y-auto">
+                <div class="px-4 py-2 text-xs font-mono text-gray-600 uppercase tracking-widest font-semibold">Platform
+                </div>
+
+                <a href="index.html"
+                    class="flex items-center px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 border-l-2 border-transparent hover:border-white/20 rounded-r-lg transition-all group">
+                    <i class="fas fa-chart-line w-6 group-hover:text-cyan-400 transition-colors"></i>
+                    <span class="font-medium">Dashboard</span>
+                </a>
+                <a href="graph.html"
+                    class="flex items-center px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 border-l-2 border-transparent hover:border-white/20 rounded-r-lg transition-all group">
+                    <i class="fas fa-project-diagram w-6 group-hover:text-purple-400 transition-colors"></i>
+                    <span class="font-medium">Infrastructure</span>
+                </a>
+                <a href="secret_scanner.html"
+                    class="flex items-center px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 border-l-2 border-transparent hover:border-white/20 rounded-r-lg transition-all group">
+                    <i class="fas fa-key w-6 group-hover:text-blue-400 transition-colors"></i>
+                    <span class="font-medium">Secret Scanner</span>
+                </a>
+                <a href="compliance_report.html"
+                    class="flex items-center px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 border-l-2 border-transparent hover:border-white/20 rounded-r-lg transition-all group">
+                    <i class="fas fa-clipboard-check w-6 group-hover:text-emerald-400 transition-colors"></i>
+                    <span class="font-medium">Compliance</span>
+                </a>
+
+                <div class="px-4 py-2 mt-6 text-xs font-mono text-gray-600 uppercase tracking-widest font-semibold">
+                    Settings</div>
+                <a href="settings.html"
+                    class="flex items-center px-4 py-3 bg-white/5 border-l-2 border-cyan-500 text-white rounded-r-lg transition-all">
+                    <i class="fas fa-cog w-6 text-cyan-400"></i>
+                    <span class="font-medium">Configuration</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col overflow-hidden relative">
+            <header class="glass-panel z-20 h-20 flex items-center justify-between px-8 border-b-0">
+                <div>
+                    <h2 class="text-2xl font-bold text-white tracking-tight">Platform Settings</h2>
+                    <p class="text-gray-400 text-xs font-mono mt-1 uppercase tracking-wide">System Configuration &
+                        Integrations</p>
+                </div>
+                <button onclick="logout()"
+                    class="w-10 h-10 rounded-full bg-white/5 border border-white/10 text-gray-400 flex items-center justify-center hover:bg-red-500/20 hover:text-red-400 hover:border-red-500/30 transition">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </header>
+
+            <main class="flex-1 overflow-y-auto p-8 relative bg-black custom-scrollbar">
+                <div class="max-w-4xl mx-auto space-y-8">
+
+                    <form id="settingsForm" class="space-y-8">
+
+                        <!-- Organization Section -->
+                        <div
+                            class="glass-panel rounded-2xl overflow-hidden group hover:border-emerald-500/30 transition duration-500">
+                            <div class="bg-gray-900/50 p-5 border-b border-white/5 flex items-center justify-between">
+                                <div class="flex items-center">
+                                    <div
+                                        class="w-10 h-10 rounded-lg bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20 mr-4">
+                                        <i class="fas fa-building text-2xl text-emerald-500"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="text-lg font-bold text-white">Organization & Billing</h3>
+                                        <p class="text-[10px] text-gray-500 uppercase tracking-widest font-bold"
+                                            id="orgName">Loading...</p>
+                                    </div>
+                                </div>
+                                <span id="currentTier"
+                                    class="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest bg-gray-800 text-gray-400 border border-gray-700">Loading</span>
+                            </div>
+
+                            <div class="p-6 space-y-6">
+                                <!-- Usage Stats -->
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div class="bg-black/30 rounded-xl p-4 border border-white/5">
+                                        <div class="flex justify-between items-end mb-2">
+                                            <span
+                                                class="text-xs text-gray-400 font-bold uppercase tracking-wide">Projects</span>
+                                            <span class="text-xs text-white font-mono" id="projectUsage">0 / 0</span>
+                                        </div>
+                                        <div class="w-full bg-gray-800 rounded-full h-1.5 overflow-hidden">
+                                            <div id="projectUsageBar" class="bg-emerald-500 h-1.5 rounded-full"
+                                                style="width: 0%"></div>
+                                        </div>
+                                    </div>
+                                    <div class="bg-black/30 rounded-xl p-4 border border-white/5">
+                                        <div class="flex justify-between items-end mb-2">
+                                            <span class="text-xs text-gray-400 font-bold uppercase tracking-wide">Team
+                                                Members</span>
+                                            <span class="text-xs text-white font-mono" id="userUsage">0 / 0</span>
+                                        </div>
+                                        <div class="w-full bg-gray-800 rounded-full h-1.5 overflow-hidden">
+                                            <div id="userUsageBar" class="bg-blue-500 h-1.5 rounded-full"
+                                                style="width: 0%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Upgrade Plans -->
+                                <div id="upgradeOptions" class="hidden grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div onclick="upgradeSubscription('pro')"
+                                        class="cursor-pointer bg-gradient-to-br from-gray-900 to-gray-800 border border-white/10 hover:border-purple-500/50 rounded-xl p-4 transition-all group relative overflow-hidden">
+                                        <div
+                                            class="absolute inset-0 bg-purple-600/5 group-hover:bg-purple-600/10 transition">
+                                        </div>
+                                        <div class="relative flex justify-between items-center">
+                                            <div>
+                                                <h4 class="font-bold text-white group-hover:text-purple-400 transition">
+                                                    Pro Plan</h4>
+                                                <p class="text-xs text-gray-500 mt-1">10 Projects • 10 Users</p>
+                                            </div>
+                                            <div class="flex flex-col items-end">
+                                                <span class="text-lg font-bold text-white">$49</span>
+                                                <span class="text-[10px] text-gray-500 uppercase">/month</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div onclick="upgradeSubscription('enterprise')"
+                                        class="cursor-pointer bg-gradient-to-br from-gray-900 to-gray-800 border border-white/10 hover:border-cyan-500/50 rounded-xl p-4 transition-all group relative overflow-hidden">
+                                        <div
+                                            class="absolute inset-0 bg-cyan-600/5 group-hover:bg-cyan-600/10 transition">
+                                        </div>
+                                        <div class="relative flex justify-between items-center">
+                                            <div>
+                                                <h4 class="font-bold text-white group-hover:text-cyan-400 transition">
+                                                    Enterprise</h4>
+                                                <p class="text-xs text-gray-500 mt-1">Unlimited Scale</p>
+                                            </div>
+                                            <div class="flex flex-col items-end">
+                                                <span class="text-lg font-bold text-white">$499</span>
+                                                <span class="text-[10px] text-gray-500 uppercase">/month</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- AWS Section -->
+                        <div
+                            class="glass-panel rounded-2xl overflow-hidden group hover:border-amber-500/30 transition duration-500">
+                            <div class="bg-gray-900/50 p-5 border-b border-white/5 flex items-center">
+                                <div
+                                    class="w-10 h-10 rounded-lg bg-amber-500/10 flex items-center justify-center border border-amber-500/20 mr-4">
+                                    <i class="fab fa-aws text-2xl text-amber-500"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-bold text-white">AWS Integration</h3>
+                                    <p class="text-[10px] text-gray-500 uppercase tracking-widest font-bold">Cloud
+                                        Credentials</p>
+                                </div>
+                            </div>
+                            <div class="p-6 space-y-6">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                        <label
+                                            class="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">Access
+                                            Key ID</label>
+                                        <div class="relative">
+                                            <i class="fas fa-id-card absolute left-4 top-3.5 text-gray-600"></i>
+                                            <input type="text" id="awsAccessKey"
+                                                class="w-full bg-black/50 border border-white/10 rounded-xl py-3 pl-11 pr-4 text-cyan-100 focus:ring-1 focus:ring-amber-500/50 focus:border-amber-500/50 transition-all placeholder-gray-700 outline-none"
+                                                placeholder="Masked value shown">
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label
+                                            class="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">Default
+                                            Region</label>
+                                        <div class="relative">
+                                            <i class="fas fa-globe absolute left-4 top-3.5 text-gray-600"></i>
+                                            <select id="awsRegion"
+                                                class="w-full bg-black/50 border border-white/10 rounded-xl py-3 pl-11 pr-4 text-gray-300 focus:ring-1 focus:ring-amber-500/50 focus:border-amber-500/50 transition-all appearance-none outline-none cursor-pointer hover:bg-white/5">
+                                                <option value="us-east-1">us-east-1 (N. Virginia)</option>
+                                                <option value="us-west-2">us-west-2 (Oregon)</option>
+                                                <option value="eu-west-1">eu-west-1 (Ireland)</option>
+                                                <option value="sa-east-1">sa-east-1 (São Paulo)</option>
+                                            </select>
+                                            <i
+                                                class="fas fa-chevron-down absolute right-4 top-4 text-xs text-gray-600 pointer-events-none"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label
+                                        class="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">Secret
+                                        Access Key</label>
+                                    <div class="relative">
+                                        <i class="fas fa-key absolute left-4 top-3.5 text-gray-600"></i>
+                                        <input type="password" id="awsSecretKey"
+                                            class="w-full bg-black/50 border border-white/10 rounded-xl py-3 pl-11 pr-4 text-cyan-100 focus:ring-1 focus:ring-amber-500/50 focus:border-amber-500/50 transition-all placeholder-gray-700 outline-none"
+                                            placeholder="Enter new secret key to update">
+                                    </div>
+                                    <p id="awsSecretStatus"
+                                        class="mt-2 text-xs flex items-center text-gray-500 font-mono"><i
+                                            class="fas fa-circle text-[6px] mr-2"></i> Status unknown</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- GitHub Section -->
+                        <div
+                            class="glass-panel rounded-2xl overflow-hidden group hover:border-white/30 transition duration-500">
+                            <div class="bg-gray-900/50 p-5 border-b border-white/5 flex items-center">
+                                <div
+                                    class="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center border border-white/10 mr-4">
+                                    <i class="fab fa-github text-2xl text-white"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-bold text-white">GitHub Integration</h3>
+                                    <p class="text-[10px] text-gray-500 uppercase tracking-widest font-bold">Source Code
+                                        Scanning</p>
+                                </div>
+                            </div>
+                            <div class="p-6">
+                                <div>
+                                    <label
+                                        class="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">Personal
+                                        Access Token</label>
+                                    <div class="relative">
+                                        <i class="fas fa-code-branch absolute left-4 top-3.5 text-gray-600"></i>
+                                        <input type="password" id="githubToken"
+                                            class="w-full bg-black/50 border border-white/10 rounded-xl py-3 pl-11 pr-4 text-cyan-100 focus:ring-1 focus:ring-white/30 focus:border-white/30 transition-all placeholder-gray-700 outline-none"
+                                            placeholder="ghp_...">
+                                    </div>
+                                    <div id="githubStatus"
+                                        class="mt-3 flex items-center p-3 bg-black/30 rounded-lg border border-white/5">
+                                        <div class="w-2 h-2 rounded-full bg-gray-600 mr-2"></div>
+                                        <span class="text-xs text-gray-500 font-mono">Not configured</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Preferences -->
+                        <div
+                            class="glass-panel rounded-2xl overflow-hidden group hover:border-purple-500/30 transition duration-500">
+                            <div class="bg-gray-900/50 p-5 border-b border-white/5 flex items-center">
+                                <div
+                                    class="w-10 h-10 rounded-lg bg-purple-500/10 flex items-center justify-center border border-purple-500/20 mr-4">
+                                    <i class="fas fa-sliders-h text-2xl text-purple-400"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-bold text-white">Preferences</h3>
+                                    <p class="text-[10px] text-gray-500 uppercase tracking-widest font-bold">User
+                                        Experience</p>
+                                </div>
+                            </div>
+                            <div class="p-6 divide-y divide-white/5">
+                                <div class="flex items-center justify-between py-4">
+                                    <div class="flex items-center">
+                                        <div
+                                            class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center mr-4 text-gray-400">
+                                            <i class="fas fa-moon"></i>
+                                        </div>
+                                        <div>
+                                            <h4 class="text-sm font-bold text-white">Dark Mode</h4>
+                                            <p class="text-xs text-gray-500">Always active in Antigravity Theme</p>
+                                        </div>
+                                    </div>
+                                    <div
+                                        class="relative inline-block w-12 mr-2 align-middle select-none transition duration-200 ease-in pointer-events-none opacity-50">
+                                        <input type="checkbox" checked disabled
+                                            class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-not-allowed" />
+                                        <label
+                                            class="toggle-label block overflow-hidden h-6 rounded-full bg-cyan-900 cursor-not-allowed border border-white/10"></label>
+                                    </div>
+                                </div>
+                                <div class="flex items-center justify-between py-4">
+                                    <div class="flex items-center">
+                                        <div
+                                            class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center mr-4 text-gray-400">
+                                            <i class="fas fa-envelope"></i>
+                                        </div>
+                                        <div>
+                                            <h4 class="text-sm font-bold text-white">Email Notifications</h4>
+                                            <p class="text-xs text-gray-500">Alerts for critical findings</p>
+                                        </div>
+                                    </div>
+                                    <div
+                                        class="relative inline-block w-12 mr-2 align-middle select-none transition duration-200 ease-in">
+                                        <input type="checkbox" name="emailNotifications" id="emailNotifications"
+                                            class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer transform transition-transform duration-200" />
+                                        <label for="emailNotifications"
+                                            class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-800 cursor-pointer border border-gray-600"></label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="flex justify-end pt-4 pb-12">
+                            <button type="submit" id="saveBtn"
+                                class="px-8 py-3 bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-500 hover:to-purple-500 text-white font-bold rounded-xl shadow-lg shadow-cyan-500/20 transform transition hover:-translate-y-0.5 border border-white/10">
+                                <i class="fas fa-save mr-2"></i> Save Changes
+                            </button>
+                        </div>
+                    </form>
+
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script src="js/config.js"></script>
+    <script>
+        const API_BASE = window.API_BASE;
+        const form = document.getElementById('settingsForm');
+        const saveBtn = document.getElementById('saveBtn');
+        const token = localStorage.getItem('access_token');
+        const awsAccessKey = document.getElementById('awsAccessKey');
+        const awsSecretKey = document.getElementById('awsSecretKey');
+        const awsRegion = document.getElementById('awsRegion');
+        const githubToken = document.getElementById('githubToken');
+        const awsSecretStatus = document.getElementById('awsSecretStatus');
+        const githubStatus = document.getElementById('githubStatus');
+        const emailNotifications = document.getElementById('emailNotifications');
+
+        async function loadOrganization() {
+            try {
+                const response = await fetch(`${API_BASE}/organization`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (response.ok) {
+                    const org = await response.json();
+                    document.getElementById('orgName').textContent = org.name;
+                    document.getElementById('currentTier').textContent = org.subscription_tier;
+                    document.getElementById('projectUsage').textContent = `${org.project_count || 0} / ${org.max_projects}`;
+                    const projPercent = ((org.project_count || 0) / org.max_projects) * 100;
+                    document.getElementById('projectUsageBar').style.width = `${projPercent}%`;
+
+                    document.getElementById('userUsage').textContent = `${org.user_count || 0} / ${org.max_users}`;
+                    const userPercent = ((org.user_count || 0) / org.max_users) * 100;
+                    document.getElementById('userUsageBar').style.width = `${userPercent}%`;
+
+                    if (org.subscription_tier === 'free') {
+                        document.getElementById('upgradeOptions').classList.remove('hidden');
+                    }
+                }
+            } catch (error) { console.error('Failed to load organization', error); }
+        }
+
+        async function loadSettings() {
+            try {
+                const response = await fetch(`${API_BASE}/settings`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    awsRegion.value = data.aws_region || 'us-east-1';
+                    if (data.aws_access_key_masked) awsAccessKey.value = data.aws_access_key_masked;
+                    updateStatus(awsSecretStatus, data.has_aws_secret);
+                    updateStatus(githubStatus, data.has_github_token, 'GitHub Token');
+                    if (data.email_notifications !== undefined) {
+                        emailNotifications.checked = data.email_notifications;
+                    }
+                }
+            } catch (error) { console.error('Failed to load settings', error); }
+        }
+
+        function updateStatus(element, isSet, label) {
+            if (isSet) {
+                element.innerHTML = element.id === 'githubStatus'
+                    ? `<div class="w-2 h-2 rounded-full bg-emerald-500 mr-2 shadow-[0_0_8px_rgba(16,185,129,0.8)]"></div><span class="text-xs text-emerald-400 font-bold tracking-wide">ACTIVE & ENCRYPTED</span>`
+                    : `<span class="text-emerald-400 font-bold"><i class="fas fa-check-circle mr-1"></i> Configured securely</span>`;
+                if (element.id === 'githubStatus') {
+                    element.classList.add('border-emerald-500/20', 'bg-emerald-500/5');
+                    element.classList.remove('border-white/5', 'bg-black/30');
+                }
+            } else {
+                element.innerHTML = element.id === 'githubStatus'
+                    ? `<div class="w-2 h-2 rounded-full bg-gray-600 mr-2"></div><span class="text-xs text-gray-500 font-mono">Not configured</span>`
+                    : `<span class="text-gray-500"><i class="fas fa-circle text-[6px] mr-2"></i> Not configured</span>`;
+                if (element.id === 'githubStatus') {
+                    element.classList.remove('border-emerald-500/20', 'bg-emerald-500/5');
+                    element.classList.add('border-white/5', 'bg-black/30');
+                }
+            }
+        }
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            saveBtn.disabled = true;
+            saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Saving...';
+
+            const payload = {
+                aws_region: awsRegion.value,
+                dark_mode: true,
+                email_notifications: emailNotifications.checked
+            };
+            if (awsAccessKey.value && !awsAccessKey.value.includes('****')) payload.aws_access_key = awsAccessKey.value;
+            if (awsSecretKey.value) payload.aws_secret_key = awsSecretKey.value;
+            if (githubToken.value) payload.github_token = githubToken.value;
+
+            try {
+                const response = await fetch(`${API_BASE}/settings`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                    body: JSON.stringify(payload)
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    updateStatus(awsSecretStatus, data.has_aws_secret);
+                    updateStatus(githubStatus, data.has_github_token);
+                    awsSecretKey.value = ''; githubToken.value = '';
+                    if (data.aws_access_key_masked) awsAccessKey.value = data.aws_access_key_masked;
+                    saveBtn.innerHTML = '<i class="fas fa-check mr-2"></i> Saved Successfully';
+                    saveBtn.classList.remove('from-cyan-600', 'to-purple-600');
+                    saveBtn.classList.add('from-emerald-600', 'to-emerald-500');
+                    setTimeout(() => {
+                        saveBtn.disabled = false;
+                        saveBtn.innerHTML = '<i class="fas fa-save mr-2"></i> Save Changes';
+                        saveBtn.classList.add('from-cyan-600', 'to-purple-600');
+                        saveBtn.classList.remove('from-emerald-600', 'to-emerald-500');
+                    }, 2000);
+                } else throw new Error('Save failed');
+            } catch (error) {
+                console.error(error);
+                saveBtn.innerHTML = '<i class="fas fa-times mr-2"></i> Error Saving';
+                saveBtn.classList.add('bg-red-600');
+                setTimeout(() => {
+                    saveBtn.disabled = false;
+                    saveBtn.innerHTML = '<i class="fas fa-save mr-2"></i> Save Changes';
+                    saveBtn.classList.remove('bg-red-600');
+                }, 2000);
+            }
+        });
+
+        // Initial Loads
+        loadOrganization();
+        loadSettings();
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,52 @@
+name: CloudGuardian Drift Detection
+
+on:
+  schedule:
+    - cron: '0 6 * * *'  # Daily at 6 AM
+  workflow_dispatch:  # Manual trigger
+
+jobs:
+  drift-detection:
+    name: Infrastructure Drift Detection
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+        
+    - name: Install CloudGuardian CLI
+      run: pip install cloudguardian-cli
+      
+    - name: Run drift detection
+      id: drift-check
+      run: |
+        cloudguardian drift ${{ github.repository }} --output json > drift-report.json
+        echo "DRIFT_DETECTED=$(jq '.drift_detected' drift-report.json)" >> $GITHUB_OUTPUT
+      env:
+        CLOUDGUARDIAN_TOKEN: ${{ secrets.CLOUDGUARDIAN_TOKEN }}
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        
+    - name: Upload drift report
+      uses: actions/upload-artifact@v3
+      with:
+        name: drift-detection-report
+        path: drift-report.json
+        
+    - name: Send notification on drift
+      if: steps.drift-check.outputs.DRIFT_DETECTED == 'true'
+      uses: actions/github-script@v6
+      with:
+        script: |
+          github.rest.issues.create({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            title: '🚨 Infrastructure Drift Detected',
+            body: `Infrastructure drift has been detected in ${context.repo.repo}. Please review the drift report and take appropriate action.`,
+            labels: ['drift', 'infrastructure', 'alert']
+          });et

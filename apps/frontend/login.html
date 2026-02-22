@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - CloudGuardian</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        black: '#000000',
+                        void: '#030303',
+                        neon: {
+                            blue: '#00f3ff',
+                            purple: '#bc13fe',
+                            pink: '#ff00ff'
+                        },
+                        slate: { 850: '#151e2e', 900: '#0a0a0a', 950: '#000000' }, // Override 950 to true black
+                    },
+                    fontFamily: { sans: ['Outfit', 'Inter', 'sans-serif'] },
+                    animation: {
+                        'pulse-slow': 'pulse 8s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'float': 'float 20s infinite ease-in-out',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translate(0, 0) rotate(0deg)' },
+                            '33%': { transform: 'translate(30px, -50px) rotate(10deg)' },
+                            '66%': { transform: 'translate(-20px, 20px) rotate(-5deg)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: #000000;
+        }
+
+        .antigravity-glass {
+            background: rgba(5, 5, 5, 0.6);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.8);
+        }
+
+        .neon-text {
+            background: linear-gradient(to right, #00f3ff, #bc13fe);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(0, 243, 255, 0.3);
+        }
+
+        .neon-border:focus-within {
+            border-color: #00f3ff;
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.2);
+        }
+
+        .glow-button {
+            background: linear-gradient(90deg, #00f3ff, #bc13fe);
+            position: relative;
+            z-index: 1;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .glow-button:hover {
+            box-shadow: 0 0 30px rgba(188, 19, 254, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .floating-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.5;
+            z-index: 0;
+            animation: float 20s infinite ease-in-out;
+        }
+    </style>
+</head>
+
+<body
+    class="bg-black text-white h-screen flex items-center justify-center overflow-hidden relative selection:bg-neon-pink selection:text-white">
+
+    <!-- Antigravity Background -->
+    <div class="fixed inset-0 overflow-hidden pointer-events-none">
+        <div class="floating-orb w-[600px] h-[600px] bg-neon-purple/20 top-[-20%] left-[-10%]"
+            style="animation-duration: 25s;"></div>
+        <div class="floating-orb w-[500px] h-[500px] bg-neon-blue/20 bottom-[-10%] right-[-10%]"
+            style="animation-duration: 30s; animation-delay: -5s;"></div>
+        <div class="floating-orb w-[300px] h-[300px] bg-neon-pink/10 top-[40%] left-[40%]"
+            style="animation-duration: 18s; animation-delay: -10s;"></div>
+    </div>
+
+    <!-- Login Card -->
+    <div class="antigravity-glass w-full max-w-md p-10 rounded-3xl relative z-10">
+        <div class="text-center mb-10">
+            <div
+                class="w-20 h-20 rounded-2xl bg-gradient-to-br from-gray-900 to-black flex items-center justify-center mx-auto mb-6 border border-white/10 shadow-[0_0_30px_rgba(0,243,255,0.15)]">
+                <i class="fas fa-shield-alt text-4xl neon-text"></i>
+            </div>
+            <h1 class="text-4xl font-bold text-white tracking-tight mb-2">CloudGuardian</h1>
+            <p class="text-gray-400 text-sm tracking-widest uppercase">Secure your infrastructure intelligence</p>
+        </div>
+
+        <!-- Login Form -->
+        <form id="loginForm" class="space-y-6">
+            <div>
+                <label
+                    class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2 ml-1">Identity</label>
+                <div class="relative group neon-border rounded-xl transition-all duration-300">
+                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                        <i class="fas fa-at text-gray-500 group-focus-within:text-neon-blue transition-colors"></i>
+                    </div>
+                    <input type="email" id="email"
+                        class="w-full bg-black/40 border border-white/10 text-white rounded-xl py-4 pl-12 pr-4 focus:outline-none focus:bg-black/60 block transition-all placeholder-gray-700"
+                        placeholder="agent@antigravity.io" required value="admin@company.com">
+                </div>
+            </div>
+
+            <div>
+                <label
+                    class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2 ml-1">Passcode</label>
+                <div class="relative group neon-border rounded-xl transition-all duration-300">
+                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                        <i
+                            class="fas fa-fingerprint text-gray-500 group-focus-within:text-neon-purple transition-colors"></i>
+                    </div>
+                    <input type="password" id="password"
+                        class="w-full bg-black/40 border border-white/10 text-white rounded-xl py-4 pl-12 pr-4 focus:outline-none focus:bg-black/60 block transition-all placeholder-gray-700 font-mono tracking-widest"
+                        placeholder="••••••••" required value="password">
+                </div>
+            </div>
+
+            <div class="flex items-center justify-between text-sm mt-2">
+                <label class="flex items-center text-gray-400 cursor-pointer hover:text-white transition-colors">
+                    <input type="checkbox"
+                        class="w-4 h-4 rounded border-gray-700 bg-black text-neon-blue focus:ring-neon-blue focus:ring-offset-black">
+                    <span class="ml-2">Persist Session</span>
+                </label>
+                <a href="#"
+                    class="text-gray-500 hover:text-neon-blue transition-colors text-xs uppercase tracking-wider font-bold">Recovery</a>
+            </div>
+
+            <button type="submit" id="loginBtn"
+                class="w-full py-4 mt-4 glow-button text-black font-extrabold text-lg rounded-xl uppercase tracking-widest hover:brightness-110 active:scale-[0.98]">
+                Authenticate
+            </button>
+        </form>
+
+        <!-- Registration Form (Hidden by default) -->
+        <form id="registerForm" class="space-y-6 hidden">
+            <div>
+                <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2 ml-1">Full
+                    Name</label>
+                <div class="relative group neon-border rounded-xl transition-all duration-300">
+                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                        <i class="fas fa-user text-gray-500 group-focus-within:text-neon-pink transition-colors"></i>
+                    </div>
+                    <input type="text" id="regName"
+                        class="w-full bg-black/40 border border-white/10 text-white rounded-xl py-4 pl-12 pr-4 focus:outline-none focus:bg-black/60 block transition-all placeholder-gray-700"
+                        placeholder="John Doe" required>
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2 ml-1">Email</label>
+                <div class="relative group neon-border rounded-xl transition-all duration-300">
+                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                        <i class="fas fa-at text-gray-500 group-focus-within:text-neon-blue transition-colors"></i>
+                    </div>
+                    <input type="email" id="regEmail"
+                        class="w-full bg-black/40 border border-white/10 text-white rounded-xl py-4 pl-12 pr-4 focus:outline-none focus:bg-black/60 block transition-all placeholder-gray-700"
+                        placeholder="newuser@example.com" required>
+                </div>
+            </div>
+
+            <div>
+                <label
+                    class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2 ml-1">Password</label>
+                <div class="relative group neon-border rounded-xl transition-all duration-300">
+                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                        <i class="fas fa-lock text-gray-500 group-focus-within:text-neon-purple transition-colors"></i>
+                    </div>
+                    <input type="password" id="regPassword"
+                        class="w-full bg-black/40 border border-white/10 text-white rounded-xl py-4 pl-12 pr-4 focus:outline-none focus:bg-black/60 block transition-all placeholder-gray-700 font-mono tracking-widest"
+                        placeholder="••••••••" required minlength="8">
+                </div>
+                <p class="text-[10px] text-gray-500 mt-1 ml-1">Min. 8 characters</p>
+            </div>
+
+            <button type="submit" id="regBtn"
+                class="w-full py-4 mt-4 glow-button text-black font-extrabold text-lg rounded-xl uppercase tracking-widest hover:brightness-110 active:scale-[0.98]">
+                Create Account
+            </button>
+        </form>
+
+        <div class="mt-8 text-center text-xs text-gray-600 uppercase tracking-widest">
+            <button id="toggleFormBtn" class="text-neon-blue hover:text-white transition-colors font-bold underline">
+                Criar Nova Conta
+            </button>
+            <span class="mx-2">|</span>
+            System Version v2.1.0
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toast"
+        class="fixed top-6 right-6 transform translate-x-full transition-transform duration-300 max-w-sm w-full backdrop-blur-xl rounded-xl p-4 flex items-start shadow-[0_0_30px_rgba(0,0,0,0.5)] border z-50">
+        <i id="toastIcon" class="fas text-xl mt-0.5 mr-3"></i>
+        <div>
+            <h4 id="toastTitle" class="font-bold text-sm tracking-wider uppercase"></h4>
+            <p id="toastMessage" class="text-sm mt-1"></p>
+        </div>
+    </div>
+
+    <script src="js/config.js"></script>
+    <script>
+        // Dynamic API Configuration
+        const API_BASE = window.API_BASE;
+
+        const loginForm = document.getElementById('loginForm');
+        const registerForm = document.getElementById('registerForm');
+        const toggleBtn = document.getElementById('toggleFormBtn');
+        const titleText = document.querySelector('h1.text-4xl');
+        const subText = document.querySelector('p.uppercase');
+
+        let isLogin = true;
+
+        toggleBtn.addEventListener('click', () => {
+            isLogin = !isLogin;
+            if (isLogin) {
+                loginForm.classList.remove('hidden');
+                registerForm.classList.add('hidden');
+                toggleBtn.textContent = 'Criar Nova Conta';
+                titleText.textContent = 'CloudGuardian';
+                subText.textContent = 'Secure your infrastructure intelligence';
+            } else {
+                loginForm.classList.add('hidden');
+                registerForm.classList.remove('hidden');
+                toggleBtn.textContent = 'Voltar para Login';
+                titleText.textContent = 'Registro';
+                subText.textContent = 'Junte-se à plataforma';
+            }
+        });
+
+        // Login Logic
+        const loginBtn = document.getElementById('loginBtn');
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = loginBtn;
+            const originalContent = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Verifying...';
+
+            try {
+                const formData = new URLSearchParams();
+                formData.append('username', document.getElementById('email').value);
+                formData.append('password', document.getElementById('password').value);
+
+                const response = await fetch(`${API_BASE}/token`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: formData
+                });
+
+                if (!response.ok) throw new Error('Credenciais Inválidas');
+
+                const data = await response.json();
+                localStorage.setItem('access_token', data.access_token);
+
+                showToast('success', 'Acesso Permitido', 'Redirecionando...');
+                setTimeout(() => window.location.href = 'index.html', 800);
+            } catch (error) {
+                showToast('error', 'Falha no Login', 'Verifique seu email e senha.');
+                btn.disabled = false;
+                btn.innerHTML = originalContent;
+            }
+        });
+
+        // Register Logic
+        const regBtn = document.getElementById('regBtn');
+        registerForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = regBtn;
+            const originalContent = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Creating...';
+
+            try {
+                const response = await fetch(`${API_BASE}/users`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: document.getElementById('regEmail').value,
+                        password: document.getElementById('regPassword').value,
+                        full_name: document.getElementById('regName').value
+                    })
+                });
+
+                const data = await response.json();
+                if (!response.ok) {
+                    const detail = data.detail ? (Array.isArray(data.detail) ? data.detail[0].msg : data.detail) : 'Erro desconhecido';
+                    throw new Error(detail);
+                }
+
+                showToast('success', 'Conta Criada!', 'Faça login agora.');
+                // Fill login form
+                document.getElementById('email').value = document.getElementById('regEmail').value;
+                // Switch back to login
+                toggleBtn.click();
+            } catch (error) {
+                showToast('error', 'Erro no Registro', error.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = originalContent;
+            }
+        });
+
+        function showToast(type, title, msg) {
+            const toast = document.getElementById('toast');
+            const icon = document.getElementById('toastIcon');
+            const tTitle = document.getElementById('toastTitle');
+            const tMsg = document.getElementById('toastMessage');
+
+            tTitle.textContent = title;
+            tMsg.textContent = msg;
+
+            if (type === 'success') {
+                toast.className = "fixed top-6 right-6 transform transition-transform duration-300 max-w-sm w-full bg-emerald-900/40 border border-emerald-500/50 backdrop-blur-xl rounded-xl p-4 flex items-start shadow-[0_0_30px_rgba(16,185,129,0.2)] z-50";
+                icon.className = "fas fa-check-circle text-emerald-400 text-xl mt-0.5 mr-3";
+                tTitle.className = "text-emerald-400 font-bold text-sm tracking-wider uppercase";
+                tMsg.className = "text-emerald-200 text-sm mt-1";
+            } else {
+                toast.className = "fixed top-6 right-6 transform transition-transform duration-300 max-w-sm w-full bg-red-900/40 border border-red-500/50 backdrop-blur-xl rounded-xl p-4 flex items-start shadow-[0_0_30px_rgba(239,68,68,0.2)] z-50";
+                icon.className = "fas fa-radiation text-red-500 text-xl mt-0.5 mr-3 animate-pulse";
+                tTitle.className = "text-red-500 font-bold text-sm tracking-wider uppercase";
+                tMsg.className = "text-red-300 text-sm mt-1";
+            }
+
+            toast.classList.remove('translate-x-full');
+            setTimeout(() => toast.classList.add('translate-x-full'), 4000);
+        }
+    </script>
+</body>
+
+</html>

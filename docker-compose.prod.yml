@@ -1,0 +1,96 @@
+version: '3.8'
+
+services:
+  # Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: cloudguardian-prod-postgres
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-cloudguardian}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-secure_prod_password}
+      POSTGRES_DB: ${POSTGRES_DB:-cloudguardian_prod}
+    volumes:
+      - postgres_prod_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-cloudguardian}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - cloudguardian-prod-net
+
+  # Cache
+  redis:
+    image: redis:7-alpine
+    container_name: cloudguardian-prod-redis
+    restart: always
+    volumes:
+      - redis_prod_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - cloudguardian-prod-net
+
+  # Backend API
+  backend:
+    build:
+      context: ./apps/backend
+      dockerfile: Dockerfile
+    container_name: cloudguardian-prod-backend
+    restart: always
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-cloudguardian}:${POSTGRES_PASSWORD:-secure_prod_password}@postgres:5432/${POSTGRES_DB:-cloudguardian_prod}
+      REDIS_URL: redis://redis:6379
+      SECRET_KEY: ${SECRET_KEY}
+      ALGORITHM: HS256
+      ACCESS_TOKEN_EXPIRE_MINUTES: 30
+      GITHUB_TOKEN: ${GITHUB_TOKEN}
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY}
+      LOG_LEVEL: WARNING
+    command: gunicorn app.main:app --workers 4 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - cloudguardian-prod-net
+
+  # Frontend (Internal)
+  frontend:
+    build:
+      context: ./apps/frontend
+      dockerfile: Dockerfile.prod
+    container_name: cloudguardian-prod-frontend
+    restart: always
+    networks:
+      - cloudguardian-prod-net
+
+  # Gateway (Reverse Proxy)
+  nginx:
+    image: nginx:alpine
+    container_name: cloudguardian-prod-gateway
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.prod.conf:/etc/nginx/conf.d/default.conf:ro
+      # - ./ssl:/etc/nginx/ssl:ro  # Uncomment for SSL
+    depends_on:
+      - backend
+      - frontend
+    networks:
+      - cloudguardian-prod-net
+
+networks:
+  cloudguardian-prod-net:
+    driver: bridge
+
+volumes:
+  postgres_prod_data:
+  redis_prod_data:

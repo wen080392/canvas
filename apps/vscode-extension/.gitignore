@@ -1,0 +1,30 @@
+# Dependency directories
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Build output
+out/
+*.vsix
+dist/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# OS
+Thumbs.db
+.env.local
+.env.*.local
+
+# Testing
+.nyc_output/
+coverage/
+.mocha-out/
+
+# Extension build artifacts
+vsc-extension-quickstart.md

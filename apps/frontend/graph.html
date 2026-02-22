@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infrastructure Graph - CloudGuardian</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        black: '#000000',
+                        gray: { 850: '#121212', 900: '#0a0a0a', 950: '#050505' },
+                        cyan: { 400: '#22d3ee', 500: '#06b6d4', 600: '#0891b2' },
+                        purple: { 500: '#a855f7', 600: '#9333ea' }
+                    },
+                    fontFamily: { sans: ['Outfit', 'Inter', 'sans-serif'], mono: ['JetBrains Mono', 'monospace'] }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+
+    <!-- React & Flow -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/reactflow@11.7.4/dist/style.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/reactflow@11.7.4/dist/reactflow.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dagre/0.8.5/dagre.min.js"></script>
+
+    <style>
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: #000000;
+            color: #e5e5e5;
+        }
+
+        .glass-panel {
+            background: rgba(10, 10, 10, 0.7);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .glass-sidebar {
+            background: rgba(5, 5, 5, 0.85);
+            backdrop-filter: blur(20px);
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* React Flow Dark Customization */
+        .react-flow__node {
+            border-radius: 12px;
+        }
+
+        .react-flow__handle {
+            width: 8px;
+            height: 8px;
+            background: #94a3b8;
+        }
+
+        .react-flow__controls {
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+            border-radius: 8px;
+        }
+
+        .react-flow__controls-button {
+            background: #121212;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            fill: white;
+        }
+
+        .react-flow__controls-button:hover {
+            background: #222;
+        }
+
+        .react-flow__attribution {
+            display: none;
+        }
+    </style>
+</head>
+
+<body class="h-screen overflow-hidden antialiased selection:bg-cyan-500/30 selection:text-cyan-200">
+    <!-- Background Ambience -->
+    <div class="fixed inset-0 pointer-events-none z-0">
+        <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-purple-600/10 rounded-full blur-[100px]"></div>
+        <div class="absolute bottom-0 left-0 w-[500px] h-[500px] bg-cyan-600/10 rounded-full blur-[100px]"></div>
+    </div>
+
+    <div class="flex h-screen relative z-10">
+        <!-- Sidebar (Consistent with index.html) -->
+        <aside class="w-72 glass-sidebar flex flex-col z-20">
+            <div class="p-8 pb-6">
+                <h1 class="text-2xl font-bold flex items-center tracking-tight group cursor-pointer"
+                    onclick="location.href='index.html'">
+                    <div
+                        class="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500/20 to-purple-600/20 border border-white/10 flex items-center justify-center mr-3 group-hover:border-cyan-500/50 transition-colors">
+                        <i class="fas fa-shield-alt text-cyan-400 text-lg"></i>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="text-white font-bold tracking-wide">CloudGuardian</span>
+                        <span class="text-[10px] text-gray-500 font-mono uppercase tracking-widest">Enterprise</span>
+                    </div>
+                </h1>
+            </div>
+
+            <nav class="flex-1 px-4 space-y-2 overflow-y-auto">
+                <div class="px-4 py-2 text-xs font-mono text-gray-600 uppercase tracking-widest font-semibold">Platform
+                </div>
+
+                <a href="index.html"
+                    class="flex items-center px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 border-l-2 border-transparent hover:border-white/20 rounded-r-lg transition-all group">
+                    <i class="fas fa-chart-line w-6 group-hover:text-cyan-400 transition-colors"></i>
+                    <span class="font-medium">Dashboard</span>
+                </a>
+
+                <a href="graph.html"
+                    class="flex items-center px-4 py-3 bg-white/5 border-l-2 border-purple-500 text-white rounded-r-lg transition-all">
+                    <i class="fas fa-project-diagram w-6 text-purple-400"></i>
+                    <span class="font-medium">Infrastructure</span>
+                </a>
+
+                <a href="secret_scanner.html"
+                    class="flex items-center px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 border-l-2 border-transparent hover:border-white/20 rounded-r-lg transition-all group">
+                    <i class="fas fa-key w-6 group-hover:text-yellow-400 transition-colors"></i>
+                    <span class="font-medium">Secret Scanner</span>
+                </a>
+
+                <a href="compliance_report.html"
+                    class="flex items-center px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 border-l-2 border-transparent hover:border-white/20 rounded-r-lg transition-all group">
+                    <i class="fas fa-clipboard-check w-6 group-hover:text-emerald-400 transition-colors"></i>
+                    <span class="font-medium">Compliance</span>
+                </a>
+
+                <div class="px-4 py-2 mt-6 text-xs font-mono text-gray-600 uppercase tracking-widest font-semibold">
+                    Settings</div>
+                <a href="settings.html"
+                    class="flex items-center px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 border-l-2 border-transparent hover:border-white/20 rounded-r-lg transition-all group">
+                    <i class="fas fa-cog w-6 group-hover:text-gray-300 transition-colors"></i>
+                    <span class="font-medium">Configuration</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col overflow-hidden relative">
+            <header class="glass-panel z-20 h-20 flex items-center justify-between px-8 border-b-0">
+                <div>
+                    <h2 class="text-2xl font-bold text-white tracking-tight">Infrastructure Graph</h2>
+                    <p class="text-gray-400 text-xs font-mono mt-1 uppercase tracking-wide">Live Topology Visualization
+                    </p>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button
+                        class="px-4 py-2 bg-purple-600/20 hover:bg-purple-600/40 border border-purple-500/30 text-purple-300 text-sm font-medium rounded-lg transition backdrop-blur-sm flex items-center">
+                        <i class="fas fa-download mr-2"></i> Export PNG
+                    </button>
+                </div>
+            </header>
+
+            <main class="flex-1 overflow-hidden relative bg-black">
+                <!-- React Flow Root -->
+                <div id="root" class="w-full h-full"></div>
+
+                <!-- Floating Controls -->
+                <div class="absolute top-6 right-6 z-10">
+                    <button id="openModalBtn"
+                        class="px-5 py-3 bg-gray-900/90 backdrop-blur-xl border border-white/10 hover:border-cyan-500/50 text-white rounded-xl shadow-2xl hover:bg-gray-800 transition flex items-center group">
+                        <i class="fas fa-code text-cyan-400 mr-2 group-hover:scale-110 transition-transform"></i>
+                        <span class="text-sm font-medium">Load Terraform</span>
+                    </button>
+                </div>
+
+                <!-- Legend -->
+                <div class="absolute bottom-6 left-6 glass-panel rounded-xl p-4 z-10">
+                    <h3 class="text-[10px] font-bold text-gray-500 mb-3 uppercase tracking-widest">Legend</h3>
+                    <div class="space-y-2.5">
+                        <div class="flex items-center">
+                            <div class="w-2 h-2 bg-blue-500 rounded-full mr-3 shadow-[0_0_8px_rgba(59,130,246,0.8)]">
+                            </div><span class="text-xs text-gray-400">Storage (S3)</span>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="w-2 h-2 bg-orange-500 rounded-full mr-3 shadow-[0_0_8px_rgba(249,115,22,0.8)]">
+                            </div><span class="text-xs text-gray-400">Compute (EC2)</span>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="w-2 h-2 bg-purple-500 rounded-full mr-3 shadow-[0_0_8px_rgba(168,85,247,0.8)]">
+                            </div><span class="text-xs text-gray-400">Network (VPC)</span>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="w-2 h-2 bg-emerald-500 rounded-full mr-3 shadow-[0_0_8px_rgba(16,185,129,0.8)]">
+                            </div><span class="text-xs text-gray-400">Database (RDS)</span>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Load Terraform Modal -->
+    <div id="terraformModal"
+        class="fixed inset-0 bg-black/90 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div
+            class="glass-panel w-full max-w-4xl rounded-2xl overflow-hidden shadow-2xl border border-white/10 flex flex-col max-h-[90vh]">
+            <div class="px-6 py-4 border-b border-white/5 flex justify-between items-center bg-white/5">
+                <h3 class="text-lg font-bold text-white flex items-center">Load Custom Infrastructure</h3>
+                <button id="closeModalBtn"
+                    class="w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center text-gray-400 hover:text-white transition">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div class="p-6 flex-1 flex flex-col overflow-hidden bg-black/50">
+                <p class="text-gray-400 text-sm mb-4">Paste your Terraform (HCL) code below to generate the graph.</p>
+                <textarea id="terraformInput"
+                    class="w-full flex-1 bg-gray-900/50 border border-white/10 rounded-xl p-4 font-mono text-sm text-cyan-400 focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/50 outline-none resize-none placeholder-gray-700"
+                    placeholder='resource "aws_vpc" "main" { ... }'></textarea>
+            </div>
+
+            <div class="px-6 py-4 bg-white/5 border-t border-white/5 flex justify-end space-x-3">
+                <button id="useSampleBtn"
+                    class="px-4 py-2 text-gray-400 hover:text-white text-sm font-medium transition">Load Sample</button>
+                <button id="visualizeBtn"
+                    class="px-6 py-2 bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-500 hover:to-purple-500 text-white font-bold rounded-xl transition shadow-lg shadow-purple-500/20">
+                    <i class="fas fa-wand-magic-sparkles mr-2"></i> Visualize
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- React Application -->
+    <script src="js/config.js"></script>
+    <script type="text/babel">
+        const { useState, useCallback, useEffect } = React;
+        const { ReactFlow, Controls, Background, useNodesState, useEdgesState } = window.ReactFlow;
+        const API_BASE = window.API_BASE;
+
+        // Custom Node
+        const ResourceNode = ({ data }) => {
+            const glowColor = data.color || '#64748b';
+            return (
+                <div className="px-4 py-3 rounded-xl border min-w-[200px] bg-gray-900/90 backdrop-blur-xl transition-all hover:scale-105 group" style={{ borderColor: 'rgba(255,255,255,0.1)', boxShadow: `0 0 0 1px rgba(255,255,255,0.05), 0 4px 6px -1px rgba(0,0,0,0.1)` }}>
+                    <div className="flex items-center space-x-3">
+                        <span className="text-2xl drop-shadow-lg filter" style={{ color: glowColor }}>{data.icon}</span>
+                        <div>
+                            <div className="font-bold text-sm text-white group-hover:text-cyan-200 transition-colors">{data.label}</div>
+                            <div className="text-[10px] text-gray-500 uppercase tracking-wider font-bold">{data.category}</div>
+                        </div>
+                    </div>
+                    <div className="absolute inset-x-0 bottom-0 h-0.5 bg-gradient-to-r from-transparent via-current to-transparent opacity-0 group-hover:opacity-50 transition-opacity" style={{ color: glowColor }}></div>
+                </div>
+            );
+        };
+
+        const nodeTypes = { custom: ResourceNode };
+
+        // Dagre Layout
+        const getLayoutedElements = (nodes, edges, direction = 'TB') => {
+            const dagreGraph = new dagre.graphlib.Graph();
+            dagreGraph.setDefaultEdgeLabel(() => ({}));
+            const nodeWidth = 240; const nodeHeight = 100;
+            dagreGraph.setGraph({ rankdir: direction, nodesep: 100, ranksep: 200 });
+            nodes.forEach((node) => dagreGraph.setNode(node.id, { width: nodeWidth, height: nodeHeight }));
+            edges.forEach((edge) => dagreGraph.setEdge(edge.source, edge.target));
+            dagre.layout(dagreGraph);
+            nodes.forEach((node) => {
+                const nodeWithPosition = dagreGraph.node(node.id);
+                node.position = { x: nodeWithPosition.x - nodeWidth / 2, y: nodeWithPosition.y - nodeHeight / 2 };
+                return node;
+            });
+            return { nodes, edges };
+        };
+
+        const SAMPLE_TERRAFORM = `resource "aws_vpc" "main" { cidr_block = "10.0.0.0/16" }\nresource "aws_subnet" "public" { vpc_id = aws_vpc.main.id }\nresource "aws_security_group" "web" { vpc_id = aws_vpc.main.id }\nresource "aws_instance" "web_server" { subnet_id = aws_subnet.public.id; vpc_security_group_ids = [aws_security_group.web.id] }\nresource "aws_s3_bucket" "data" { bucket = "my-data-bucket" }\nresource "aws_db_instance" "main" { vpc_security_group_ids = [aws_security_group.web.id] }`;
+
+        function InfrastructureMap() {
+            const [nodes, setNodes, onNodesChange] = useNodesState([]);
+            const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+
+            const loadGraph = async (content) => {
+                try {
+                    const token = localStorage.getItem('access_token');
+                    if (!token) { window.location.href = 'login.html'; return; }
+                    if (!token) { window.location.href = 'login.html'; return; }
+                    const response = await fetch(`${API_BASE}/graph/generate`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                        body: JSON.stringify({ content: content })
+                    });
+                    if (!response.ok) throw new Error('Failed to generate graph');
+                    const data = await response.json();
+                    const layouted = getLayoutedElements(data.nodes, data.edges);
+                    setNodes(layouted.nodes);
+                    setEdges(layouted.edges);
+                    document.getElementById('terraformModal').classList.add('hidden');
+                    document.getElementById('terraformModal').classList.remove('flex');
+                    setTimeout(() => window.reactFlowInstance && window.reactFlowInstance.fitView(), 100);
+                } catch (error) { console.error(error); alert("Error generating graph: " + error.message); }
+            };
+
+            useEffect(() => {
+                const modal = document.getElementById('terraformModal');
+                document.getElementById('openModalBtn').onclick = () => { modal.classList.remove('hidden'); modal.classList.add('flex'); };
+                document.getElementById('closeModalBtn').onclick = () => { modal.classList.add('hidden'); modal.classList.remove('flex'); };
+                document.getElementById('useSampleBtn').onclick = () => { document.getElementById('terraformInput').value = SAMPLE_TERRAFORM; };
+                document.getElementById('visualizeBtn').onclick = () => {
+                    const code = document.getElementById('terraformInput').value.trim();
+                    if (!code) { alert("Please enter Terraform code"); return; }
+                    loadGraph(code);
+                };
+                if (nodes.length === 0) loadGraph(SAMPLE_TERRAFORM);
+            }, []);
+
+            return (
+                <ReactFlow nodes={nodes} edges={edges} onNodesChange={onNodesChange} onEdgesChange={onEdgesChange} nodeTypes={nodeTypes} fitView onInit={(instance) => window.reactFlowInstance = instance} className="bg-black">
+                    <Controls className="glass-panel text-white border-white/10" />
+                    <Background color="#333" gap={20} size={1} />
+                </ReactFlow>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<InfrastructureMap />);
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,57 @@
+import React, { useState, useEffect } from 'react'
+import './App.css'
+import Dashboard from './components/Dashboard'
+import { Alert, Loading } from './components/UI'
+
+function App() {
+  const [user, setUser] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+
+  useEffect(() => {
+    const token = localStorage.getItem('access_token')
+    if (!token) {
+      window.location.href = '/login.html'
+      return
+    }
+    setLoading(false)
+  }, [])
+
+  const handleLogout = () => {
+    localStorage.removeItem('access_token')
+    window.location.href = '/login.html'
+  }
+
+  if (loading) return <Loading />
+
+  return (
+    <div className="app">
+      {/* Navigation */}
+      <nav className="navbar">
+        <div className="navbar-brand">
+          <span className="logo-icon">🛡️</span>
+          <span>CloudGuardian</span>
+        </div>
+        <div className="navbar-menu">
+          <a href="index.html">📊 Dashboard</a>
+          <a href="graph.html">🏗️ Infrastructure</a>
+          <a href="secret_scanner.html">🔑 Secrets</a>
+          <a href="auto_remediation.html">🤖 Remediation</a>
+          <a href="compliance_report.html">📋 Compliance</a>
+          <a href="settings.html">⚙️ Settings</a>
+        </div>
+        <button onClick={handleLogout} className="logout-btn">
+          🚪 Logout
+        </button>
+      </nav>
+
+      {/* Main Content */}
+      <main className="main-content">
+        {error && <Alert type="error" title="Erro" message={error} />}
+        <Dashboard />
+      </main>
+    </div>
+  )
+}
+
+export default App
