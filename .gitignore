@@ -1,0 +1,51 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+env/
+env.bak/
+apps/**/venv/
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Editor directories and files
+.vscode/
+.idea/
+
+# OS files
+Thumbs.db
+.DS_Store
+
+# Environment files
+.env
+.env.*
+.env.local
+
+# Database files
+cloudguardian.db
+*.db
+test.db
+pytest_output.txt
+
+# VS Code workspace
+*.code-workspace
+
+# Logs
+*.log
+
+# Misc
+coverage/
+.pytest_cache/
