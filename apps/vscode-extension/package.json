@@ -1,0 +1,45 @@
+{
+  "name": "cloudguardian-vscode",
+  "displayName": "CloudGuardian",
+  "description": "Security-as-Code for Terraform",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onLanguage:terraform"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "cloudguardian.scan",
+        "title": "CloudGuardian: Scan File"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "test": "mocha -r ts-node/register -r src/test/setup.ts src/**/*.test.ts"
+  },
+  "dependencies": {
+    "axios": "^1.6.0"
+  },
+  "devDependencies": {
+    "@types/chai": "^4.3.0",
+    "@types/mocha": "^10.0.0",
+    "@types/module-alias": "^2.0.4",
+    "@types/node": "^18.0.0",
+    "@types/vscode": "^1.80.0",
+    "chai": "^4.3.0",
+    "mocha": "^10.2.0",
+    "module-alias": "^2.2.3",
+    "ts-node": "^10.9.0",
+    "typescript": "^5.0.0"
+  }
+}

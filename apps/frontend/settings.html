@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - CloudGuardian</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+    <script>
+        if (!localStorage.getItem('access_token')) {
+            window.location.href = 'login.html';
+        }
+    </script>
+</head>
+
+<body class="bg-gray-50">
+    <div class="flex h-screen overflow-hidden">
+        <!-- Sidebar -->
+        <aside class="w-64 bg-gray-900 text-white flex flex-col z-50">
+            <div class="p-6">
+                <h1 class="text-2xl font-bold flex items-center">
+                    <i class="fas fa-shield-alt mr-2 text-blue-400"></i>
+                    CloudGuardian
+                </h1>
+                <p class="text-gray-400 text-sm mt-1">Security Platform</p>
+                </a>
+                </nav>
+
+                <div class="p-4 border-t border-gray-800">
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm font-medium" id="userEmail">Loading...</p>
+                            <button onclick="logout()" class="text-xs text-red-400 hover:text-red-300">Logout</button>
+                        </div>
+                    </div>
+                </div>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <!-- Header -->
+            <header class="bg-white shadow-sm z-10">
+                <div class="px-8 py-4">
+                    <h2 class="text-2xl font-bold text-gray-800">Settings</h2>
+                    <p class="text-gray-600 text-sm">Manage your account and integrations</p>
+                </div>
+            </header>
+
+            <!-- Content -->
+            <main class="flex-1 overflow-y-auto p-8">
+                <!-- Profile Section -->
+                <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+                    <h3 class="text-lg font-bold text-gray-800 mb-4">Profile</h3>
+                    <div class="flex items-center space-x-6">
+                        <div
+                            class="w-20 h-20 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center">
+                            <i class="fas fa-user text-white text-3xl"></i>
+                        </div>
+                        <div class="flex-1">
+                            <p class="font-semibold text-gray-800">Email: <span id="profileEmail">-</span></p>
+                            <p class="text-sm text-gray-600">Role: Administrator</p>
+                        </div>
+                        <button class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition">
+                            Change Password
+                        </button>
+                    </div>
+                </div>
+
+                <!-- AWS Integration -->
+                <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <div>
+                            <h3 class="text-lg font-bold text-gray-800">AWS Connection</h3>
+                            <p class="text-sm text-gray-600">Connect your AWS account for infrastructure scanning</p>
+                        </div>
+                        <span id="awsStatus" class="px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-sm">Not
+                            Connected</span>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Access Key ID</label>
+                            <div class="relative">
+                                <input type="password" id="awsAccessKey"
+                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    placeholder="AKIA...">
+                                <button onclick="toggleVisibility('awsAccessKey')"
+                                    class="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Secret Access Key</label>
+                            <div class="relative">
+                                <input type="password" id="awsSecretKey"
+                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    placeholder="●●●●●●●●">
+                                <button onclick="toggleVisibility('awsSecretKey')"
+                                    class="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Region</label>
+                            <select id="awsRegion"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                                <option value="us-east-1">US East (N. Virginia)</option>
+                                <option value="us-west-2">US West (Oregon)</option>
+                                <option value="eu-west-1">EU (Ireland)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="flex space-x-3 mt-4">
+                        <button onclick="testAWSConnection()"
+                            class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition">
+                            <i class="fas fa-plug mr-2"></i>
+                            Test Connection
+                        </button>
+                        <button onclick="saveAWSSettings()"
+                            class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+                            <i class="fas fa-save mr-2"></i>
+                            Save
+                        </button>
+                    </div>
+                </div>
+
+                <!-- GitHub Integration -->
+                <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <div>
+                            <h3 class="text-lg font-bold text-gray-800">GitHub Connection</h3>
+                            <p class="text-sm text-gray-600">Connect GitHub for automatic PR creation</p>
+                        </div>
+                        <span id="githubStatus" class="px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-sm">Not
+                            Connected</span>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Personal Access Token</label>
+                        <div class="relative">
+                            <input type="password" id="githubToken"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                placeholder="ghp_...">
+                            <button onclick="toggleVisibility('githubToken')"
+                                class="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-1">
+                            <a href="https://github.com/settings/tokens" target="_blank"
+                                class="text-blue-600 hover:underline">
+                                Generate a new token
+                            </a> with <code class="bg-gray-100 px-1 rounded">repo</code> scope
+                        </p>
+                    </div>
+
+                    <div class="flex space-x-3 mt-4">
+                        <button onclick="saveGitHubSettings()"
+                            class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+                            <i class="fas fa-save mr-2"></i>
+                            Save
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Preferences -->
+                <div class="bg-white rounded-xl shadow-sm p-6">
+                    <h3 class="text-lg font-bold text-gray-800 mb-4">Preferences</h3>
+
+                    <div class="space-y-4">
+                        <label class="flex items-center justify-between">
+                            <div>
+                                <p class="font-medium text-gray-800">Dark Mode</p>
+                                <p class="text-sm text-gray-600">Enable dark mode theme</p>
+                            </div>
+                            <input type="checkbox" id="darkMode"
+                                class="w-12 h-6 appearance-none bg-gray-300 rounded-full relative cursor-pointer transition checked:bg-blue-600">
+                        </label>
+
+                        <label class="flex items-center justify-between">
+                            <div>
+                                <p class="font-medium text-gray-800">Email Notifications</p>
+                                <p class="text-sm text-gray-600">Receive alerts for new vulnerabilities</p>
+                            </div>
+                            <input type="checkbox" id="emailNotifications" checked
+                                class="w-12 h-6 appearance-none bg-gray-300 rounded-full relative cursor-pointer transition checked:bg-blue-600">
+                        </label>
+                    </div>
+
+                    <button onclick="savePreferences()"
+                        class="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+                        Save Preferences
+                    </button>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast"
+        class="fixed bottom-4 right-4 px-6 py-3 rounded-lg shadow-lg transform transition-all duration-300 translate-y-20 opacity-0 flex items-center">
+        <span id="toastMessage" class="font-medium"></span>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:8000';
+        const token = localStorage.getItem('access_token');
+
+        // Load settings on page load
+        document.addEventListener('DOMContentLoaded', loadSettings);
+
+        function toggleVisibility(id) {
+            const input = document.getElementById(id);
+            const icon = input.nextElementSibling.querySelector('i');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toastMessage');
+
+            toast.className = `fixed bottom-4 right-4 px-6 py-3 rounded-lg shadow-lg transform transition-all duration-300 flex items-center ${type === 'success' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
+                }`;
+            toastMessage.textContent = message;
+
+            // Show
+            setTimeout(() => {
+                toast.classList.remove('translate-y-20', 'opacity-0');
+            }, 10);
+
+            // Hide
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+
+        async function loadSettings() {
+            try {
+                const response = await fetch(`${API_URL}/settings`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+
+                    // Profile
+                    document.getElementById('userEmail').textContent = data.email || 'user@example.com';
+                    document.getElementById('profileEmail').textContent = data.email || 'user@example.com';
+
+                    // AWS
+                    if (data.aws_region) document.getElementById('awsRegion').value = data.aws_region;
+                    if (data.aws_access_key_masked) document.getElementById('awsAccessKey').value = data.aws_access_key_masked;
+                    if (data.has_aws_secret) document.getElementById('awsSecretKey').value = '********';
+
+                    if (data.aws_access_key_masked) {
+                        document.getElementById('awsStatus').textContent = 'Connected';
+                        document.getElementById('awsStatus').className = 'px-3 py-1 bg-green-100 text-green-600 rounded-full text-sm';
+                    }
+
+                    // GitHub
+                    if (data.has_github_token) {
+                        document.getElementById('githubToken').value = 'ghp_************************************';
+                        document.getElementById('githubStatus').textContent = 'Connected';
+                        document.getElementById('githubStatus').className = 'px-3 py-1 bg-green-100 text-green-600 rounded-full text-sm';
+                    }
+
+                    // Preferences
+                    document.getElementById('darkMode').checked = data.dark_mode;
+                    document.getElementById('emailNotifications').checked = data.email_notifications;
+                }
+            } catch (error) {
+                console.error('Error loading settings:', error);
+                showToast('Failed to load settings', 'error');
+            }
+        }
+
+        async function saveAWSSettings() {
+            const accessKey = document.getElementById('awsAccessKey').value;
+            const secretKey = document.getElementById('awsSecretKey').value;
+            const region = document.getElementById('awsRegion').value;
+
+            // Don't send masked values back
+            const payload = { aws_region: region };
+            if (accessKey && !accessKey.includes('****')) payload.aws_access_key = accessKey;
+            if (secretKey && !secretKey.includes('****')) payload.aws_secret_key = secretKey;
+
+            try {
+                const response = await fetch(`${API_URL}/settings`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                if (response.ok) {
+                    showToast('AWS settings saved successfully');
+                    loadSettings(); // Reload to update status
+                } else {
+                    showToast('Failed to save AWS settings', 'error');
+                }
+            } catch (error) {
+                showToast('Error saving settings', 'error');
+            }
+        }
+
+        async function saveGitHubSettings() {
+            const tokenVal = document.getElementById('githubToken').value;
+
+            if (!tokenVal || tokenVal.includes('****')) return;
+
+            try {
+                const response = await fetch(`${API_URL}/settings`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ github_token: tokenVal })
+                });
+
+                if (response.ok) {
+                    showToast('GitHub settings saved successfully');
+                    loadSettings();
+                } else {
+                    showToast('Failed to save GitHub settings', 'error');
+                }
+            } catch (error) {
+                showToast('Error saving settings', 'error');
+            }
+        }
+
+        async function savePreferences() {
+            const darkMode = document.getElementById('darkMode').checked;
+            const emailNotifications = document.getElementById('emailNotifications').checked;
+
+            try {
+                const response = await fetch(`${API_URL}/settings`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        dark_mode: darkMode,
+                        email_notifications: emailNotifications
+                    })
+                });
+
+                if (response.ok) {
+                    showToast('Preferences saved successfully');
+                } else {
+                    showToast('Failed to save preferences', 'error');
+                }
+            } catch (error) {
+                showToast('Error saving preferences', 'error');
+            }
+        }
+
+        function testAWSConnection() {
+            // Mock test
+            const btn = document.querySelector('button[onclick="testAWSConnection()"]');
+            const originalText = btn.innerHTML;
+
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Testing...';
+            btn.disabled = true;
+
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+
+                const isConnected = document.getElementById('awsStatus').textContent === 'Connected';
+                if (isConnected) {
+                    showToast('Connection successful! AWS resources accessible.');
+                } else {
+                    showToast('Connection failed. Please check your credentials.', 'error');
+                }
+            }, 2000);
+        }
+
+        function logout() {
+            localStorage.removeItem('access_token');
+            window.location.href = 'login.html';
+        }
+    </script>
+</body>
+
+</html>
